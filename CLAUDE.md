@@ -36,7 +36,8 @@ tools (`playwright-core`). Reply to the owner in Hebrew.
   `PENCIL_SELFTEST=1 "/Applications/Pencil Sketch.app/Contents/MacOS/PencilSketch"`. `NO_INSTALL=1` builds into `build/` only;
   `./mac/package.sh` then writes `build/PencilSketch-mac.dmg`.
 - Shareable ad: `node tools/make-ad.mjs` renders `docs/ad/ad.html` (site design) to `docs/ad/pencil-sketch-ad-square.png`
-  (1080x1080) and `-story.png` (1080x1920). Edit the text in `ad.html`, then rerun.
+  (1080x1080) and `-story.png` (1080x1920), and `docs/ad/banner.html` to `docs/banner.png` (1280x640, top of both READMEs,
+  also the size of GitHub's social preview). Edit the HTML, then rerun.
 - Syntax: `node --check web/js/engine.js` (classic script). The others are ES modules.
 - Headless tools use the installed Google Chrome (`channel: 'chrome'`).
 

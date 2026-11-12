@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/banner.png" alt="סקיצה בעיפרון · Pencil Sketch" width="900"></p>
+
 <div dir="rtl">
 
 # סקיצה בעיפרון · Pencil Sketch

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Pencil Sketch banner</title>
+<link rel="stylesheet" href="../../web/fonts/fonts.css">
+<style>
+  /* Repo banner / social preview, 1280x640, same design as the site. Rendered by tools/make-ad.mjs. */
+  :root { --paper: #f3ecdc; --sheet: #fffdf6; --ink: #2a2927; --soft: #8c877d; --graphite: #5d5a54; --pencil: #f5b83d; --pencil-deep: #e09a17;
+    --radius: 255px 18px 225px 18px / 18px 225px 18px 255px; --radius-b: 18px 225px 18px 255px / 255px 18px 225px 18px;
+    --hand: 'Playpen Sans Hebrew', sans-serif; --body: 'Rubik', sans-serif; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1280px; height: 640px; }
+  body { position: relative; overflow: hidden; color: var(--ink); font-family: var(--body); background-color: var(--paper);
+    background-image: radial-gradient(rgba(93, 90, 84, 0.2) 1.6px, transparent 2.2px); background-size: 34px 34px; }
+  .sheet { position: absolute; inset: 40px; background: var(--sheet); border: 4px solid var(--ink); border-radius: var(--radius); box-shadow: 9px 11px 0 rgba(42, 41, 39, 0.16); }
+  .tape { position: absolute; width: 180px; height: 46px; top: 17px; z-index: 5; border-inline: 3px dotted rgba(42, 41, 39, 0.25); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12); }
+  .tape.a { right: 150px; background: rgba(245, 184, 61, 0.6); transform: rotate(4deg); }
+  .tape.b { left: 170px; background: rgba(238, 143, 138, 0.55); transform: rotate(-5deg); }
+  .wrap { position: absolute; inset: 40px; padding: 50px 60px; display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 44px; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand svg { width: 116px; height: 116px; flex: none; }
+  h1 { font: 800 78px/1.02 var(--hand); letter-spacing: -0.015em; white-space: nowrap; }
+  .en { font: 400 30px var(--hand); color: var(--soft); letter-spacing: 0.1em; direction: ltr; text-align: right; margin-top: 6px; }
+  .line { margin-top: 34px; font: 600 38px/1.3 var(--hand); }
+  .line em { font-style: normal; background: linear-gradient(transparent 62%, rgba(245, 184, 61, 0.75) 62%); padding: 0 4px; }
+  .chips { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .chips span { padding: 6px 18px; font: 600 23px var(--body); background: var(--sheet); border: 3px solid var(--ink); border-radius: 999px; white-space: nowrap; }
+  .chips span.y { background: var(--pencil); }
+  .pic { position: relative; direction: ltr; height: 450px; overflow: hidden; border: 4px solid var(--ink); border-radius: 10px; background: #efe8d8; box-shadow: 6px 7px 0 rgba(42, 41, 39, 0.18); transform: rotate(-1.6deg); }
+  .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 10%; }
+  .pic .before { clip-path: inset(0 0 0 50%); }
+  .pic .divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 6px; margin-left: -3px; background: var(--sheet); box-shadow: 0 0 0 2px var(--ink); }
+  .pic .knob { position: absolute; top: 50%; left: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: var(--pencil); border: 4px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); display: grid; place-items: center; }
+  .pic .knob svg { width: 34px; height: 34px; fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+  <div class="sheet"></div><div class="tape a"></div><div class="tape b"></div>
+  <div class="wrap">
+    <div>
+      <div class="brand">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M8 52c6-9 10 5 16-3s8 4 13-2" fill="none" stroke="#2a2927" stroke-width="2.6" stroke-linecap="round" />
+          <g transform="rotate(-45 38 28)" stroke="#2a2927" stroke-width="2">
+            <rect x="14" y="22" width="34" height="12" rx="1.5" fill="#f5b83d" />
+            <rect x="8" y="22" width="8" height="12" rx="3" fill="#ee8f8a" />
+            <rect x="15" y="22" width="4" height="12" fill="#cfd3d6" />
+            <path d="M48 22l12 6-12 6z" fill="#e9c99c" stroke-linejoin="round" />
+            <path d="M55.5 25.8l4.5 2.2-4.5 2.2z" fill="#2a2927" stroke="none" />
+          </g>
+        </svg>
+        <div><h1>סקיצה בעיפרון</h1><p class="en">Pencil Sketch</p></div>
+      </div>
+      <p class="line">תמונה נכנסת, <em>ציור עיפרון</em> יוצא</p>
+      <div class="chips"><span class="y">חינם וקוד פתוח</span><span>מק</span><span>Windows</span><span>דפדפן</span></div>
+    </div>
+    <div class="pic">
+      <img src="after.jpg" alt="">
+      <img class="before" src="../../web/samples/sample.jpg" alt="">
+      <div class="divider"></div>
+      <div class="knob"><svg viewBox="0 0 24 24"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" /></svg></div>
+    </div>
+  </div>
+</body>
+</html>

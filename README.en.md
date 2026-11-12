@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/banner.png" alt="Pencil Sketch" width="900"></p>
+
 # Pencil Sketch · סקיצה בעיפרון
 
 [עברית](README.md) · **English** (technical details)
