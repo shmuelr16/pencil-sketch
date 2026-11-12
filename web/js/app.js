@@ -3,7 +3,8 @@
 import { PencilSketch, DEFAULTS } from './pencil.js';
 
 const $ = (id) => document.getElementById(id);
-const native = (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.pencil) || null;
+const native = (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.pencil) || null;   // Mac app
+const winShell = !!(window.chrome && window.chrome.webview);                                                       // Windows app (WebView2)
 
 const LABELS = {
   load: 'פותח את התמונה…', detect: 'מזהה פנים ורקע…', resize: 'מכין את הדף…', smooth: 'מחליק גוונים…',
@@ -226,7 +227,7 @@ async function save(type) {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
-  toast(`נשמר: ${name}`, 2600);
+  if (!winShell) toast(`נשמר: ${name}`, 2600);      // the Windows app shows its own Save dialog
 }
 el.savePng.addEventListener('click', () => save('image/png'));
 el.saveJpg.addEventListener('click', () => save('image/jpeg'));
@@ -238,10 +239,19 @@ if (coarse) {
   $('pickLabel').textContent = 'מהגלריה';
   document.querySelector('.drop h2').textContent = 'בוחרים תמונה, ומקבלים ציור';
 }
-if (native) {
+if (native || winShell) {
   for (const b of [el.savePng, el.saveJpg]) b.querySelector('span').textContent = b.querySelector('span').textContent.replace('הורדה', 'שמירה');
-  document.querySelector('.foot p').textContent = 'הציור נוצר כולו במחשב שלך, בלי אינטרנט. אפשר גם לגרור תמונה על האייקון ב-Dock.';
+  document.querySelector('.foot p').textContent = native
+    ? 'הציור נוצר כולו במחשב שלך, בלי אינטרנט. אפשר גם לגרור תמונה על האייקון ב-Dock.'
+    : 'הציור נוצר כולו במחשב שלך, בלי אינטרנט.';
 }
+/* Ctrl/Cmd+O opens a picture, Ctrl/Cmd+S saves a PNG (the Mac app does the same through its menu) */
+window.addEventListener('keydown', (ev) => {
+  if (!(ev.ctrlKey || ev.metaKey) || ev.altKey || ev.shiftKey) return;
+  const key = ev.key.toLowerCase();
+  if (key === 'o') { ev.preventDefault(); el.file.click(); }
+  else if (key === 's') { ev.preventDefault(); if (hasResult) save('image/png'); }
+});
 $('pick').addEventListener('click', () => el.file.click());
 $('shoot').addEventListener('click', () => el.camera.click());
 $('another').addEventListener('click', () => el.file.click());

@@ -1,4 +1,4 @@
-// Draws the app icon (SVG below) and writes web/icons/* and mac/AppIcon.icns.
+// Draws the app icon (SVG below) and writes web/icons/*, mac/AppIcon.icns and windows/PencilSketch/app.ico.
 // Usage: node tools/make-icons.mjs   (needs Google Chrome and, for the .icns, macOS iconutil)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -65,6 +65,28 @@ for (const [size, name] of [[16, '16x16'], [32, '16x16@2x'], [32, '32x32'], [64,
   [256, '256x256'], [512, '256x256@2x'], [512, '512x512'], [1024, '512x512@2x']]) {
   await png(mac, size, path.join(set, `icon_${name}.png`));
 }
+/* Windows .ico: PNG images packed in an ICO container */
+const icoSizes = [16, 24, 32, 48, 64, 128, 256], icoPngs = [];
+for (const size of icoSizes) {
+  const f = path.join(set, `ico_${size}.png`);
+  await png(iconSvg(40, 200), size, f);
+  icoPngs.push(fs.readFileSync(f));
+  fs.unlinkSync(f);
+}
+const icoHead = Buffer.alloc(6 + 16 * icoSizes.length);
+icoHead.writeUInt16LE(1, 2); icoHead.writeUInt16LE(icoSizes.length, 4);
+let icoOffset = icoHead.length;
+icoSizes.forEach((size, i) => {
+  const o = 6 + 16 * i;
+  icoHead.writeUInt8(size === 256 ? 0 : size, o); icoHead.writeUInt8(size === 256 ? 0 : size, o + 1);
+  icoHead.writeUInt16LE(1, o + 4); icoHead.writeUInt16LE(32, o + 6);
+  icoHead.writeUInt32LE(icoPngs[i].length, o + 8); icoHead.writeUInt32LE(icoOffset, o + 12);
+  icoOffset += icoPngs[i].length;
+});
+fs.mkdirSync(path.join(ROOT, 'windows', 'PencilSketch'), { recursive: true });
+fs.writeFileSync(path.join(ROOT, 'windows', 'PencilSketch', 'app.ico'), Buffer.concat([icoHead, ...icoPngs]));
+console.log('wrote windows/PencilSketch/app.ico');
+
 await browser.close();
 try {
   execFileSync('iconutil', ['-c', 'icns', set, '-o', path.join(ROOT, 'mac', 'AppIcon.icns')]);
