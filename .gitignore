@@ -4,3 +4,4 @@ build/
 .vercel
 *.pyc
 .venv/
+.env*
