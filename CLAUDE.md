@@ -54,7 +54,9 @@ tools (`playwright-core`). Reply to the owner in Hebrew.
 
 ## Deployment
 
-Vercel team Edinova, project `pencil-sketch`, linked to `shmuelr16/pencil-sketch`. Merge to `main` = production deploy.
+Vercel team Edinova (`team_1bFqCa7vlBk88KhFH9OOvQfZ`), project `pencil-sketch` (`prj_t0WzKPzErtwsfVHuMgzjriTXwW58`), linked to
+`shmuelr16/pencil-sketch`. Merge to `main` = production deploy: https://pencil-sketch-zeta.vercel.app
+(also `pencil-sketch-edinova.vercel.app`).
 `vercel.json`: no install, no build, output `web/`. `.vercelignore` drops everything but `web/`.
 `ssoProtection` is `all` (even production needs a Vercel login), so headless checks against the live URL get a login
 redirect; test locally instead.

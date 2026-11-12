@@ -3,7 +3,7 @@
 Turns a photo of a person into a pencil sketch that looks hand-drawn. Everything runs on the device
 (opencv.js + MediaPipe, WebAssembly). The photo is never uploaded.
 
-- **Website**: static, on Vercel (team Edinova, project `pencil-sketch`). Private for now (Vercel Authentication).
+- **Website**: https://pencil-sketch-zeta.vercel.app , static, on Vercel (team Edinova, project `pencil-sketch`). Private for now (Vercel Authentication).
 - **Mac app**: `/Applications/Pencil Sketch.app`, a Swift `WKWebView` shell around the same files. No Electron.
 - **Windows**: planned, see [`windows/README.md`](windows/README.md).
 
