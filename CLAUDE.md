@@ -19,7 +19,9 @@ tools (`playwright-core`). Reply to the owner in Hebrew.
 - `web/` must keep working from all three hosts: no absolute URLs for its own files, no `file://` assumptions, relative paths only.
 - After any change in `web/`, run `./mac/build.sh` so the installed app matches (files are copied into the bundle).
 - New bundled third-party files need an entry in `THIRD_PARTY_NOTICES.md` and their license text in `web/licenses/`.
-- `README.md` (English) and `README.he.md` (Hebrew) say the same things; update both.
+- `README.md` is the owner-facing Hebrew page: short and simple on purpose (download links, install steps, who built it,
+  "not an AI tool"). Do not add technical detail there; that goes in `README.en.md`. `.github/release-notes.md` (Hebrew)
+  repeats the download and install part for each release.
 
 ## Commands
 
