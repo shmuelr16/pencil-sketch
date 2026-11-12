@@ -1,5 +1,6 @@
 # Builds the Windows app, runs its self-test on a real Windows machine, and uploads
-# a portable zip and an installer. Runs when the app or its shell changes, or by hand.
+# a portable zip and an installer (as a workflow artifact and on the rolling release 'windows-latest').
+# Runs when the app or its shell changes, or by hand.
 name: Windows app
 
 on:
@@ -9,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write   # to attach the build to the 'windows-latest' release
 
 jobs:
   build:
@@ -55,3 +56,18 @@ jobs:
             out/PencilSketch-Setup.exe
             selftest.txt
           if-no-files-found: error
+
+      - name: Attach to the rolling release "windows-latest"
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $notes = "Automatic build of commit $env:GITHUB_SHA. Self-test on Windows: $(Get-Content selftest.txt -TotalCount 1)`n`nInstall with PencilSketch-Setup.exe (unsigned: SmartScreen > More info > Run anyway), or unzip the portable version."
+          gh release view windows-latest *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create windows-latest out/PencilSketch-Setup.exe out/PencilSketch-windows-x64.zip --title "Pencil Sketch for Windows (latest build)" --notes $notes --target $env:GITHUB_SHA
+          } else {
+            gh release upload windows-latest out/PencilSketch-Setup.exe out/PencilSketch-windows-x64.zip --clobber
+            gh release edit windows-latest --notes $notes
+          }
+          exit $LASTEXITCODE

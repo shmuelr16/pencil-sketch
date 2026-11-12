@@ -5,7 +5,7 @@ Turns a photo of a person into a pencil sketch that looks hand-drawn. Everything
 
 - **Website**: https://pencil-sketch-zeta.vercel.app , static, on Vercel (team Edinova, project `pencil-sketch`). Private for now (Vercel Authentication).
 - **Mac app**: `/Applications/Pencil Sketch.app`, a Swift `WKWebView` shell around the same files. No Electron.
-- **Windows**: planned, see [`windows/README.md`](windows/README.md).
+- **Windows app**: C# + WebView2 shell around the same files, built and self-tested by GitHub Actions. See [`windows/README.md`](windows/README.md).
 
 ![Original, Python reference and JavaScript engine side by side](docs/compare.png)
 
@@ -23,7 +23,8 @@ web/                  the whole app: UI + engine. Shared by the website, the Mac
   models/             face_landmarker.task, selfie_multiclass_256x256.tflite
   fonts/ icons/ samples/
 mac/                  PencilSketch.swift, Info.plist, AppIcon.icns, build.sh
-windows/              plan for the WebView2 shell
+windows/              PencilSketch/ (C# WinForms + WebView2 shell), installer.iss (Inno Setup)
+.github/workflows/    windows.yml: build, self-test and package the Windows app
 reference/pencil.py   the original hand-tuned Python script, kept as is
 tools/                dev tools (Node + headless Chrome): serve, sketch, compare, shots, make-icons
 docs/compare.png      Python vs JavaScript on the same photo
@@ -80,6 +81,12 @@ Compiles `mac/PencilSketch.swift` with `swiftc`, copies `web/` into the bundle, 
 - Self-test: `PENCIL_SELFTEST=1 "/Applications/Pencil Sketch.app/Contents/MacOS/PencilSketch"` prints one line,
   for example `selftest: OK 1400x1867 engine=3.6s total=6.4s faces=1 person=yes mean=180`, and exits (0 = ok).
 
+## Windows app
+
+Built by GitHub Actions on every push that touches `web/` or `windows/`: `dotnet publish`, self-test on a real Windows
+runner, then an installer (`PencilSketch-Setup.exe`) and a portable zip as the artifact `PencilSketch-windows`.
+Details, install notes and limits: [`windows/README.md`](windows/README.md).
+
 ## Website
 
 Vercel serves `web/` as is (`vercel.json`). The GitHub repo is connected to the Vercel project, so every merge to
@@ -87,7 +94,7 @@ Vercel serves `web/` as is (`vercel.json`). The GitHub repo is connected to the 
 
 ## Updating
 
-- **UI or engine**: edit `web/`, run `node tools/shots.mjs`, then `./mac/build.sh`, commit, push.
+- **UI or engine**: edit `web/`, run `node tools/shots.mjs`, then `./mac/build.sh`, commit, push. The push redeploys the site and rebuilds the Windows app.
 - **Engine look**: after touching `web/js/engine.js`, run `node tools/compare.mjs` and look at `docs/compare.png`.
 - **Icon**: edit the SVG in `tools/make-icons.mjs`, run it, rebuild the Mac app.
 - **opencv.js / MediaPipe**: replace the files in `web/vendor/` and `web/models/` (versions above), then run all checks.

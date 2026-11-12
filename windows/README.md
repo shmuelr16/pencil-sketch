@@ -1,32 +1,57 @@
-# Windows shell (not built yet)
+# Windows app
 
-Plan: a small C#/.NET app with a WebView2 control that shows the same `web/` folder the website and the Mac app use.
-Nothing in `web/` needs to change.
+A small C# app (WinForms + WebView2, .NET 8) that shows the same `web/` folder the website and the Mac app use.
+No Electron. Nothing in `web/` is Windows-specific.
 
-## What to build
+```
+windows/
+  PencilSketch/PencilSketch.csproj   self-contained single exe (win-x64), copies ..\..\web next to it as web\
+  PencilSketch/Program.cs            the whole shell
+  PencilSketch/app.ico               made by tools/make-icons.mjs
+  installer.iss                      Inno Setup: per-user install, Start menu shortcut, "Open with" entries
+```
 
-1. **Project**: `windows/PencilSketch/` , a WinForms or WPF app on .NET 8 with the `Microsoft.Web.WebView2` NuGet package.
-2. **Serve `web/` locally, without a server**: copy `web/` next to the exe at build time and map it to a virtual host:
-   `webView.CoreWebView2.SetVirtualHostNameToFolderMapping("pencil.app", webDir, CoreWebView2HostResourceAccessKind.Allow);`
-   then navigate to `https://pencil.app/index.html`. A virtual https host is needed (not `file://`) so the Web Worker,
-   the ES modules and WebAssembly load. This is the same job `pencil://app/` does in `mac/PencilSketch.swift`.
-3. **Save**: the page saves through a plain `<a download>` when no native bridge exists, and WebView2 shows its own
-   download UI. For a real "Save As" dialog, handle `CoreWebView2.DownloadStarting` (set `ResultFilePath` from a
-   `SaveFileDialog`). No change to the page is needed.
-4. **Open a file dropped on the exe / "Open with"**: read `args[0]`, expose the file through a second folder mapping
-   (or `AddWebResourceRequestedFilter`), then call the page hook that already exists:
-   `ExecuteScriptAsync("window.pencilOpenURL('https://pencil.app/__open/1', 'name.jpg')")` once `window.pencilReady` is true.
-5. **Drag onto the window**: works by itself, the page handles `drop`.
-6. **Self-test**: `PENCIL_SELFTEST=1` → wait for `window.pencilReady`, run `await window.pencilSelfTest()`
-   (returns a JSON string), print one line, exit. Same contract as the Mac app.
-7. **Packaging**: `dotnet publish -r win-x64 --self-contained` plus the Evergreen WebView2 runtime (preinstalled on
-   Windows 11). Icon: make an `.ico` from the SVG in `tools/make-icons.mjs`.
+## Getting a build
 
-## Page hooks the shell can rely on
+There is no Windows machine in the loop: **GitHub Actions builds and tests it** (`.github/workflows/windows.yml`).
+Every push to `main` that touches `web/`, `windows/` or the workflow (or a manual run) does:
 
-| Hook | Meaning |
-| --- | --- |
-| `window.pencilReady === true` | page script finished loading |
-| `window.pencilOpenURL(url, name)` | fetch a picture from `url` and draw it |
-| `window.pencilSelfTest()` | runs the bundled sample, resolves to a JSON string `{ok, width, height, engineMs, totalMs, faces, person, mean}` |
-| `window.webkit.messageHandlers.pencil` | Mac-only save bridge. On Windows leave it undefined, the page falls back to a normal download |
+1. `dotnet publish` on `windows-latest`
+2. the self-test on that real Windows machine (`PENCIL_SELFTEST=1`, must print `selftest: OK ...`)
+3. uploads the artifact `PencilSketch-windows`: `PencilSketch-Setup.exe` (installer) and `PencilSketch-windows-x64.zip` (portable)
+
+```
+gh run list --workflow windows.yml --limit 1
+gh run download <run id> -n PencilSketch-windows -D build/windows
+```
+
+4. attaches the same two files to the rolling GitHub Release **`windows-latest`** (easiest place to download from):
+   https://github.com/shmuelr16/pencil-sketch/releases/tag/windows-latest
+
+To build on a Windows PC instead: install the .NET 8 SDK, then
+`dotnet publish windows/PencilSketch/PencilSketch.csproj -c Release -o out/PencilSketch`.
+
+## Installing
+
+Run `PencilSketch-Setup.exe`. No admin rights needed; it installs to `%LOCALAPPDATA%\Programs\Pencil Sketch` and adds
+a Start menu entry. The exe is **not code-signed**, so SmartScreen shows "Windows protected your PC": More info > Run anyway.
+Needs the WebView2 Runtime, which is part of Windows 11 (and of updated Windows 10).
+
+## How it works
+
+- `web\` is mapped to the virtual host `https://pencil.app/` (`SetVirtualHostNameToFolderMapping`). A real https origin
+  (not `file://`) is what lets the Web Worker, ES modules and WebAssembly load. Same job as `pencil://app/` on the Mac.
+- **Drop on the window**: handled by the page.
+- **Open with / drop on the exe**: `args[0]` is served at `https://pencil.app/__open/<n>` through `WebResourceRequested`,
+  then `window.pencilOpenURL(url, name)` is called once `window.pencilReady` is true.
+- **Save**: the page starts a normal download (`<a download>`); `DownloadStarting` replaces the download bar with a
+  Save As dialog. Ctrl+S saves a PNG, Ctrl+O opens a picture (both handled by the page).
+- **Self-test**: `PENCIL_SELFTEST=1` runs `window.pencilSelfTest()`, gets the JSON back through
+  `chrome.webview.postMessage`, prints one line and exits (0 = ok). It is a GUI exe, so redirect its output:
+  `Start-Process PencilSketch.exe -RedirectStandardOutput out.txt -Wait`.
+- WebView2 keeps its data in `%LOCALAPPDATA%\PencilSketch\WebView2`.
+
+## Not done
+
+- Code signing (needs a certificate), auto-update, ARM64 build.
+- A second launch opens a second window (no single-instance hand-off).

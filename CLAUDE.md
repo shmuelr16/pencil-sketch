@@ -5,8 +5,8 @@ Guidance for Claude Code in this repository.
 ## What this is
 
 Pencil Sketch: photo of a person -> hand-drawn-looking pencil sketch, fully on-device. One static web app in `web/`
-(Hebrew, RTL) that is served three ways: the Vercel site, the Mac app (`mac/`, Swift + WKWebView) and later a Windows
-WebView2 shell (`windows/README.md`). There is no bundler and no build step. `package.json` exists only for the dev
+(Hebrew, RTL) that is served three ways: the Vercel site, the Mac app (`mac/`, Swift + WKWebView) and the Windows app
+(`windows/`, C# WinForms + WebView2). There is no bundler and no build step. `package.json` exists only for the dev
 tools (`playwright-core`). Reply to the owner in Hebrew.
 
 ## Rules
@@ -50,6 +50,12 @@ tools (`playwright-core`). Reply to the owner in Hebrew.
   generated at 1/8 size. The RNG differs from numpy, so hatch lines and grain match statistically, not pixel by pixel.
 - Mac shell: custom scheme `pencil://app/` (WKURLSchemeHandler) serves `Resources/web`; opened files are served at
   `pencil://app/__open/<n>` and handed to `window.pencilOpenURL`. Save goes page -> `messageHandlers.pencil` -> NSSavePanel.
+- Windows shell (`windows/PencilSketch/Program.cs`): `web\` mapped to `https://pencil.app/`; opened files served at
+  `https://pencil.app/__open/<n>` via `WebResourceRequested`; save = page download -> `DownloadStarting` -> SaveFileDialog;
+  self-test result comes back through `chrome.webview.postMessage`. The page detects it with `window.chrome.webview`.
+  It cannot be built or run on this Mac (no dotnet): `.github/workflows/windows.yml` builds it on `windows-latest`, runs
+  `PENCIL_SELFTEST=1` there and uploads the artifact `PencilSketch-windows` (Setup.exe + zip). After a push, check it with
+  `gh run list --workflow windows.yml --limit 1` / `gh run watch <id> --exit-status`. The exe is unsigned.
 - Page hooks used by shells and tools: `window.pencilReady`, `window.pencilOpenURL(url, name)`, `window.pencilSelfTest()`.
 
 ## Deployment
