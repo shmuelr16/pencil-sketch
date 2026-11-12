@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Pencil Sketch ad</title>
+<link rel="stylesheet" href="../../web/fonts/fonts.css">
+<style>
+  /* Same look as the site (web/style.css): cream paper, graphite ink, one yellow pencil.
+     Rendered to PNG by tools/make-ad.mjs. ?format=square (1080x1080) or ?format=story (1080x1920). */
+  :root {
+    --paper: #f3ecdc; --sheet: #fffdf6; --ink: #2a2927; --graphite: #5d5a54; --soft: #8c877d; --line: #d9cfb9;
+    --pencil: #f5b83d; --pencil-deep: #e09a17; --eraser: #ee8f8a; --wood: #e9c99c;
+    --radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+    --radius-b: 18px 225px 18px 255px / 255px 18px 225px 18px;
+    --hand: 'Playpen Sans Hebrew', sans-serif; --body: 'Rubik', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1080px; height: 1080px; }
+  body.story, html.story { height: 1920px; }
+  body {
+    position: relative; overflow: hidden; color: var(--ink); font-family: var(--body);
+    background-color: var(--paper);
+    background-image: radial-gradient(rgba(93, 90, 84, 0.2) 1.6px, transparent 2.2px);
+    background-size: 34px 34px;
+  }
+  .sheet { position: absolute; inset: 44px; background: var(--sheet); border: 4px solid var(--ink); border-radius: var(--radius); box-shadow: 9px 11px 0 rgba(42, 41, 39, 0.16); }
+  .tape { position: absolute; width: 190px; height: 50px; top: 18px; z-index: 5; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12); border-inline: 3px dotted rgba(42, 41, 39, 0.25); }
+  .tape.a { right: 120px; background: rgba(245, 184, 61, 0.6); transform: rotate(4deg); }
+  .tape.b { left: 130px; background: rgba(238, 143, 138, 0.55); transform: rotate(-5deg); }
+
+  .wrap { position: absolute; inset: 44px; padding: 58px 58px 46px; display: grid; gap: 30px; }
+  body.square .wrap { grid-template-columns: 396px 1fr; grid-template-rows: auto 1fr auto; grid-template-areas: "brand brand" "pic text" "foot foot"; }
+  body.story .wrap { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; grid-template-areas: "brand" "pic" "text" "foot"; padding: 84px 64px 60px; gap: 40px; }
+
+  .brand { grid-area: brand; display: flex; align-items: center; gap: 20px; }
+  .brand svg { width: 92px; height: 92px; flex: none; }
+  .brand h1 { font: 800 62px/1.05 var(--hand); letter-spacing: -0.01em; }
+  .brand p { font: 400 23px var(--hand); color: var(--soft); letter-spacing: 0.08em; direction: ltr; text-align: right; margin-top: 4px; }
+  .free { margin-inline-start: auto; padding: 8px 26px; font: 800 34px var(--hand); background: var(--pencil); border: 4px solid var(--ink); border-radius: var(--radius-b); box-shadow: 5px 5px 0 var(--ink); transform: rotate(-4deg); }
+  body.story .brand svg { width: 112px; height: 112px; }
+  body.story .brand h1 { font-size: 76px; }
+
+  .pic { grid-area: pic; position: relative; direction: ltr; overflow: hidden; border: 4px solid var(--ink); border-radius: 10px; background: #efe8d8; box-shadow: 6px 7px 0 rgba(42, 41, 39, 0.18); transform: rotate(-1.2deg); }
+  body.square .pic { height: 100%; min-height: 0; }
+  body.story .pic { height: 800px; transform: rotate(-0.8deg); }
+  .pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; display: block; }
+  .pic .before { clip-path: inset(0 0 0 50%); }
+  .pic .divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 6px; margin-left: -3px; background: var(--sheet); box-shadow: 0 0 0 2px var(--ink); }
+  .pic .knob { position: absolute; top: 50%; left: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; background: var(--pencil); border: 4px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); display: grid; place-items: center; }
+  .pic .knob svg { width: 40px; height: 40px; fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .tag { position: absolute; bottom: 16px; padding: 3px 20px; font: 700 26px var(--hand); background: rgba(255, 253, 246, 0.94); border: 3px solid var(--ink); border-radius: 999px; }
+  .tag.after { left: 16px; } .tag.before-t { right: 16px; }
+
+  .text { grid-area: text; display: flex; flex-direction: column; justify-content: center; gap: 22px; min-width: 0; }
+  .text h2 { font: 800 58px/1.16 var(--hand); letter-spacing: -0.01em; }
+  .text h2 em { font-style: normal; background: linear-gradient(transparent 62%, rgba(245, 184, 61, 0.75) 62%); padding: 0 4px; }
+  ul { list-style: none; padding: 0; display: grid; gap: 13px; }
+  li { display: flex; align-items: center; gap: 14px; font: 500 29px/1.25 var(--body); }
+  li svg { width: 34px; height: 34px; flex: none; fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  li svg .fill { fill: var(--pencil); }
+  body.story .text { justify-content: flex-start; gap: 30px; }
+  body.story .text h2 { font-size: 80px; }
+  body.story li { font-size: 40px; gap: 18px; }
+  body.story li svg { width: 46px; height: 46px; }
+  body.story ul { gap: 20px; }
+
+  .foot { grid-area: foot; display: grid; grid-template-columns: 1fr auto; gap: 22px; align-items: stretch; }
+  body.story .foot { grid-template-columns: 1fr; gap: 26px; }
+  .gh { display: flex; align-items: center; gap: 20px; padding: 16px 26px; color: var(--sheet); background: var(--ink); border-radius: var(--radius-b); box-shadow: 5px 5px 0 var(--pencil-deep); }
+  .gh svg { width: 62px; height: 62px; flex: none; fill: var(--sheet); }
+  .gh b { display: block; font: 800 33px/1.15 var(--hand); }
+  .gh span { display: block; font: 500 23px var(--body); direction: ltr; text-align: right; color: #e9e2d0; margin-top: 3px; }
+  .url { display: flex; flex-direction: column; justify-content: center; padding: 12px 28px; text-align: center; background: var(--pencil); border: 4px solid var(--ink); border-radius: var(--radius); box-shadow: 5px 5px 0 var(--ink); }
+  .url small { font: 600 21px var(--body); }
+  .url b { font: 700 28px var(--body); direction: ltr; }
+  body.story .gh { padding: 24px 32px; } body.story .gh b { font-size: 46px; } body.story .gh span { font-size: 31px; } body.story .gh svg { width: 84px; height: 84px; }
+  body.story .url { padding: 20px 28px; } body.story .url small { font-size: 30px; } body.story .url b { font-size: 41px; }
+  body.square li { font-size: 25px; white-space: nowrap; gap: 12px; }
+  body.square .text h2 { font-size: 56px; }
+  body.square .foot { grid-template-columns: 1fr auto; }
+  body.square .gh b { font-size: 29px; white-space: nowrap; }
+  body.square .gh span { font-size: 20px; white-space: nowrap; }
+  body.square .gh svg { width: 56px; height: 56px; }
+  body.square .url { padding: 10px 22px; }
+  body.square .url small { font-size: 19px; white-space: nowrap; }
+  body.square .url b { font-size: 21px; white-space: nowrap; }
+  .by { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; font: 500 17px var(--body); color: var(--soft); }
+  body.story .by { font-size: 20px; bottom: 8px; }
+</style>
+</head>
+<body class="square">
+  <div class="sheet"></div>
+  <div class="tape a"></div><div class="tape b"></div>
+  <div class="wrap">
+    <header class="brand">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M8 52c6-9 10 5 16-3s8 4 13-2" fill="none" stroke="#2a2927" stroke-width="2.6" stroke-linecap="round" />
+        <g transform="rotate(-45 38 28)" stroke="#2a2927" stroke-width="2">
+          <rect x="14" y="22" width="34" height="12" rx="1.5" fill="#f5b83d" />
+          <rect x="8" y="22" width="8" height="12" rx="3" fill="#ee8f8a" />
+          <rect x="15" y="22" width="4" height="12" fill="#cfd3d6" />
+          <path d="M48 22l12 6-12 6z" fill="#e9c99c" stroke-linejoin="round" />
+          <path d="M55.5 25.8l4.5 2.2-4.5 2.2z" fill="#2a2927" stroke="none" />
+        </g>
+      </svg>
+      <div><h1>סקיצה בעיפרון</h1><p>Pencil Sketch</p></div>
+      <div class="free">חינם!</div>
+    </header>
+
+    <div class="pic">
+      <img src="after.jpg" alt="">
+      <img class="before" src="../../web/samples/sample.jpg" alt="">
+      <div class="divider"></div>
+      <div class="knob"><svg viewBox="0 0 24 24"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" /></svg></div>
+      <span class="tag after">אחרי</span><span class="tag before-t">לפני</span>
+    </div>
+
+    <div class="text">
+      <h2>תמונה נכנסת,<br><em>ציור עיפרון</em> יוצא</h2>
+      <ul>
+        <li><svg viewBox="0 0 24 24"><rect class="fill" x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>התמונה נשארת אצלכם במחשב</li>
+        <li><svg viewBox="0 0 24 24"><circle class="fill" cx="12" cy="12" r="9" /><path d="M8 12.5l3 3 5-6" /></svg>לא AI. אלגוריתם קבוע, אותן פנים</li>
+        <li><svg viewBox="0 0 24 24"><rect class="fill" x="3" y="5" width="18" height="12" rx="2" /><path d="M8 21h8M12 17v4" /></svg>למק, ל-Windows ובדפדפן</li>
+      </ul>
+    </div>
+
+    <footer class="foot">
+      <div class="gh">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z" /></svg>
+        <div><b>וגם קוד פתוח ב-GitHub</b><span>github.com/shmuelr16/pencil-sketch</span></div>
+      </div>
+      <div class="url"><small>מנסים עכשיו, בלי התקנה</small><b>pencil-sketch-zeta.vercel.app</b></div>
+    </footer>
+  </div>
+  <div class="by">נבנה כולו על ידי Claude Code</div>
+  <script>
+    const f = new URLSearchParams(location.search).get('format') === 'story' ? 'story' : 'square';
+    document.body.className = f; document.documentElement.className = f;
+  </script>
+</body>
+</html>
