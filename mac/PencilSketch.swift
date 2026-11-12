@@ -197,6 +197,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKScriptMessageHandler
         decisionHandler(.allow)
     }
 
+    /* links with target="_blank" (the GitHub link in the footer) open in the default browser */
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for action: WKNavigationAction,
+                 windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if let url = action.request.url, url.scheme == "http" || url.scheme == "https" { NSWorkspace.shared.open(url) }
+        return nil
+    }
+
     /* ---------- PENCIL_SELFTEST=1 ---------- */
     func runSelfTest() {
         web.callAsyncJavaScript("return await window.pencilSelfTest()", arguments: [:], in: nil, in: .page) { result in

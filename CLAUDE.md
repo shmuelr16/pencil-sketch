@@ -11,14 +11,15 @@ tools (`playwright-core`). Reply to the owner in Hebrew.
 
 ## Rules
 
-- **The GitHub repo stays private and Vercel Authentication stays on** until the owner says otherwise. Never run
-  `gh repo edit --visibility public` or loosen `ssoProtection` on your own. Going open source has its own checklist
-  (MIT license, English + Hebrew README with screenshots and a free-to-use before/after photo, secret scan) and needs
-  the owner's explicit yes first.
+- The project is **open source (MIT) and public** since 2026-11-12: the GitHub repo is public and the website has no login.
+  Everything committed is public. Never commit secrets, tokens, `.env*` files, personal e-mail addresses, local paths
+  or private notes. Commits use the GitHub noreply address (repo-local `git config user.email`); keep it that way.
 - `reference/pencil.py` is the owner's original script. Keep it byte-for-byte; it is the visual ground truth.
 - Photos never leave the device. Do not add analytics, remote fonts, CDNs or any upload. Models and wasm are local files.
-- `web/` must keep working from all three hosts: no absolute URLs, no `file://` assumptions, relative paths only.
+- `web/` must keep working from all three hosts: no absolute URLs for its own files, no `file://` assumptions, relative paths only.
 - After any change in `web/`, run `./mac/build.sh` so the installed app matches (files are copied into the bundle).
+- New bundled third-party files need an entry in `THIRD_PARTY_NOTICES.md` and their license text in `web/licenses/`.
+- `README.md` (English) and `README.he.md` (Hebrew) say the same things; update both.
 
 ## Commands
 
@@ -28,7 +29,9 @@ tools (`playwright-core`). Reply to the owner in Hebrew.
   The Python takes ~90 s (GrabCut). Its eye boxes are hard-coded, so only `web/samples/sample.jpg` (cropped to put the
   eyes there) is a fair input.
 - UI smoke test + screenshots: `node tools/shots.mjs <outDir>` (desktop 1280 and iPhone 13; fails on page errors).
-- Mac: `./mac/build.sh`, then `PENCIL_SELFTEST=1 "/Applications/Pencil Sketch.app/Contents/MacOS/PencilSketch"`.
+- Mac: `./mac/build.sh` (universal arm64 + x86_64, installs to /Applications), then
+  `PENCIL_SELFTEST=1 "/Applications/Pencil Sketch.app/Contents/MacOS/PencilSketch"`. `NO_INSTALL=1` builds into `build/` only;
+  `./mac/package.sh` then writes `build/PencilSketch-mac.dmg`.
 - Syntax: `node --check web/js/engine.js` (classic script). The others are ES modules.
 - Headless tools use the installed Google Chrome (`channel: 'chrome'`).
 
@@ -53,16 +56,17 @@ tools (`playwright-core`). Reply to the owner in Hebrew.
 - Windows shell (`windows/PencilSketch/Program.cs`): `web\` mapped to `https://pencil.app/`; opened files served at
   `https://pencil.app/__open/<n>` via `WebResourceRequested`; save = page download -> `DownloadStarting` -> SaveFileDialog;
   self-test result comes back through `chrome.webview.postMessage`. The page detects it with `window.chrome.webview`.
-  It cannot be built or run on this Mac (no dotnet): `.github/workflows/windows.yml` builds it on `windows-latest`, runs
-  `PENCIL_SELFTEST=1` there and uploads the artifact `PencilSketch-windows` (Setup.exe + zip). After a push, check it with
-  `gh run list --workflow windows.yml --limit 1` / `gh run watch <id> --exit-status`. The exe is unsigned.
+  It cannot be built or run on this Mac (no dotnet): CI builds it. The exe is unsigned.
+- CI (`.github/workflows/build.yml`): jobs `windows` (windows-latest) and `mac` (macos-latest) build, run
+  `PENCIL_SELFTEST=1` and upload artifacts on every push to `main` that touches `web/`, `mac/` or `windows/`. After a push,
+  check with `gh run list --workflow build.yml --limit 1` / `gh run watch <id> --exit-status`.
+- Releases: push a tag `vX.Y.Z` -> the same jobs, then job `release` publishes a GitHub Release with
+  `PencilSketch-mac.dmg`, `PencilSketch-Setup.exe`, `PencilSketch-windows-x64.zip` and the text of
+  `.github/release-notes.md`. The README download links use `releases/latest/download/<name>`, so keep these file names.
 - Page hooks used by shells and tools: `window.pencilReady`, `window.pencilOpenURL(url, name)`, `window.pencilSelfTest()`.
 
 ## Deployment
 
-Vercel team Edinova (`team_1bFqCa7vlBk88KhFH9OOvQfZ`), project `pencil-sketch` (`prj_t0WzKPzErtwsfVHuMgzjriTXwW58`), linked to
-`shmuelr16/pencil-sketch`. Merge to `main` = production deploy: https://pencil-sketch-zeta.vercel.app
-(also `pencil-sketch-edinova.vercel.app`).
-`vercel.json`: no install, no build, output `web/`. `.vercelignore` drops everything but `web/`.
-`ssoProtection` is `all` (even production needs a Vercel login), so headless checks against the live URL get a login
-redirect; test locally instead.
+Website: Vercel project `pencil-sketch`, linked to the GitHub repo `shmuelr16/pencil-sketch`. Merge to `main` = production
+deploy: https://pencil-sketch-zeta.vercel.app . `vercel.json`: no install, no build, output `web/`.
+`.vercelignore` drops everything but `web/`. The site is public (no Vercel Authentication).

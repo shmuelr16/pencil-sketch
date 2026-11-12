@@ -13,20 +13,18 @@ windows/
 
 ## Getting a build
 
-There is no Windows machine in the loop: **GitHub Actions builds and tests it** (`.github/workflows/windows.yml`).
-Every push to `main` that touches `web/`, `windows/` or the workflow (or a manual run) does:
+Download the latest release:
+[PencilSketch-Setup.exe](https://github.com/shmuelr16/pencil-sketch/releases/latest/download/PencilSketch-Setup.exe) ·
+[portable zip](https://github.com/shmuelr16/pencil-sketch/releases/latest/download/PencilSketch-windows-x64.zip)
+
+**GitHub Actions builds and tests it** (`.github/workflows/build.yml`, job `windows`). Every push to `main` that touches
+`web/` or `windows/` does:
 
 1. `dotnet publish` on `windows-latest`
 2. the self-test on that real Windows machine (`PENCIL_SELFTEST=1`, must print `selftest: OK ...`)
 3. uploads the artifact `PencilSketch-windows`: `PencilSketch-Setup.exe` (installer) and `PencilSketch-windows-x64.zip` (portable)
 
-```
-gh run list --workflow windows.yml --limit 1
-gh run download <run id> -n PencilSketch-windows -D build/windows
-```
-
-4. attaches the same two files to the rolling GitHub Release **`windows-latest`** (easiest place to download from):
-   https://github.com/shmuelr16/pencil-sketch/releases/tag/windows-latest
+A version tag (`v1.2.3`) also publishes them in a GitHub Release.
 
 To build on a Windows PC instead: install the .NET 8 SDK, then
 `dotnet publish windows/PencilSketch/PencilSketch.csproj -c Release -o out/PencilSketch`.

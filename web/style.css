@@ -186,6 +186,8 @@ input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 
 
 .foot { margin-top: 26px; text-align: center; font-size: 0.82rem; color: var(--soft); }
 .foot p { margin: 0; }
+.foot .credit { margin-top: 4px; }
+.foot a { color: var(--graphite); text-decoration: underline wavy var(--pencil-deep); text-underline-offset: 4px; }
 
 /* ---------- overlays ---------- */
 .dropveil { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: rgba(245, 184, 61, 0.3); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); pointer-events: none; }
