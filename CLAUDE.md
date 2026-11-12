@@ -14,7 +14,8 @@ tools (`playwright-core`). Reply to the owner in Hebrew.
 - The project is **open source (MIT) and public** since 2026-11-12: the GitHub repo is public and the website has no login.
   Everything committed is public. Never commit secrets, tokens, `.env*` files, personal e-mail addresses, local paths
   or private notes. Commits use the GitHub noreply address (repo-local `git config user.email`); keep it that way.
-- `reference/pencil.py` is the owner's original script. Keep it byte-for-byte; it is the visual ground truth.
+- `reference/pencil.py` is the original script the owner brought (written for him by Claude in the phone app, tuned for
+  one photo of his). Keep it byte-for-byte; it is the visual ground truth. The owner wrote no code; say so in the docs.
 - Photos never leave the device. Do not add analytics, remote fonts, CDNs or any upload. Models and wasm are local files.
 - `web/` must keep working from all three hosts: no absolute URLs for its own files, no `file://` assumptions, relative paths only.
 - After any change in `web/`, run `./mac/build.sh` so the installed app matches (files are copied into the bundle).

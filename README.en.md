@@ -56,8 +56,9 @@ always gives the same drawing. The only learned parts are two small on-device mo
 background are; they draw nothing.
 
 **This whole project was built by [Claude Code](https://claude.com/claude-code), Anthropic's coding agent.**
-The owner supplied a written brief and one Python script that had been tuned by hand for a single photo
-(`reference/pencil.py`). Claude Code ported the algorithm to JavaScript, replaced the hand-tuned parts with automatic
+The starting point was also written by Claude: the owner asked the Claude app on his phone to turn one photo of
+himself into a pencil drawing, and it wrote a Python script tuned for that single photo (`reference/pencil.py`).
+The owner then gave that script and a written brief to Claude Code, and wrote no code himself. Claude Code ported the algorithm to JavaScript, replaced the hand-tuned parts with automatic
 detection, wrote the interface, the Mac and Windows apps, the build pipeline, the tests and these docs.
 
 ### Libraries and tools used
@@ -110,7 +111,7 @@ web/                  the whole app: UI + engine. Shared by the website, the Mac
   fonts/ icons/ samples/ licenses/
 mac/                  PencilSketch.swift, Info.plist, AppIcon.icns, build.sh, package.sh
 windows/              PencilSketch/ (C# WinForms + WebView2), installer.iss
-reference/pencil.py   the original hand-tuned Python script, kept as is
+reference/pencil.py   the original Python script (written by Claude in the phone app, tuned for one photo), kept as is
 tools/                dev tools: serve, sketch, compare, shots, make-icons
 .github/workflows/    build.yml: build + self-test both apps, release on a version tag
 docs/                 compare.png and screenshots
