@@ -1,0 +1,9 @@
+mac/
+windows/
+reference/
+tools/
+docs/
+build/
+node_modules/
+*.md
+.claude/

@@ -1,0 +1,14 @@
+{
+  "name": "pencil-sketch",
+  "private": true,
+  "type": "module",
+  "description": "Dev tools only (headless test harness). The app itself has no build step.",
+  "scripts": {
+    "serve": "node tools/serve.mjs",
+    "sketch": "node tools/sketch.mjs",
+    "compare": "node tools/compare.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.64.1"
+  }
+}
