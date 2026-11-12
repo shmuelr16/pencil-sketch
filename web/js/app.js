@@ -269,6 +269,42 @@ $('sample').addEventListener('click', async () => {
   } catch (e) { /* handled in handleFile */ }
 });
 
+/* ---------- "get the desktop app" (website only): point at the installer for this computer ---------- */
+function detectDesktop() {
+  const ua = navigator.userAgent || '';
+  const plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+  if (/iPhone|iPad|iPod|Android/i.test(ua)) return 'mobile';
+  if (/Mac/i.test(plat) && navigator.maxTouchPoints > 1) return 'mobile';      // iPadOS says it is a Mac
+  if (/Win/i.test(plat) || /Windows/i.test(ua)) return 'windows';
+  if (/Mac/i.test(plat) || /Macintosh/i.test(ua)) return 'mac';
+  return 'other';
+}
+(function setupGetApp() {
+  const box = $('getapp');
+  if (native || winShell) return;                      // already inside the app
+  const os = detectDesktop();
+  if (os === 'mobile') return;                         // nothing to install on a phone
+  const mac = $('dlMac'), win = $('dlWin'), note = $('getappNote');
+  const hint = document.createElement('span');
+  if (os === 'mac') {
+    mac.classList.add('primary');
+    win.classList.add('small');
+    $('getappTitle').textContent = 'זיהיתי שאתם במק. רוצים את זה כאפליקציה?';
+    hint.textContent = 'בפתיחה הראשונה: הגדרות המערכת ← פרטיות ואבטחה ← Open Anyway. ';
+  } else if (os === 'windows') {
+    win.classList.add('primary');
+    mac.classList.add('small');
+    win.parentNode.insertBefore(win, mac);             // the matching button comes first
+    $('getappTitle').textContent = 'זיהיתי שאתם ב-Windows. רוצים את זה כאפליקציה?';
+    hint.textContent = 'אם מופיע חלון כחול: More info ואז Run anyway. ';
+  } else {
+    hint.textContent = 'יש גרסה למק ול-Windows. ';
+  }
+  note.insertBefore(hint, note.firstChild);
+  box.dataset.os = os;
+  box.hidden = false;
+})();
+
 /* drag & drop anywhere on the page */
 let dragDepth = 0;
 const hasFiles = (ev) => ev.dataTransfer && Array.from(ev.dataTransfer.types || []).includes('Files');
