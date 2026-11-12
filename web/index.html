@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pencil Sketch · סקיצה בעיפרון</title>
+  <meta name="description" content="הופכים תמונה של אדם לסקיצה בעיפרון שנראית מצוירת ביד. הכול רץ בדפדפן, והתמונה לא יוצאת מהמכשיר.">
+  <meta name="theme-color" content="#f3ecdc">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+          <path class="logo-squiggle" d="M8 52c6-9 10 5 16-3s8 4 13-2" />
+          <g transform="rotate(-45 38 28)">
+            <rect x="14" y="22" width="34" height="12" rx="1.5" class="logo-body" />
+            <rect x="8" y="22" width="8" height="12" rx="3" class="logo-eraser" />
+            <rect x="15" y="22" width="4" height="12" class="logo-ring" />
+            <path d="M48 22l12 6-12 6z" class="logo-wood" />
+            <path d="M55.5 25.8l4.5 2.2-4.5 2.2z" class="logo-tip" />
+          </g>
+        </svg>
+        <div>
+          <h1>סקיצה בעיפרון</h1>
+          <p class="sub">Pencil Sketch</p>
+        </div>
+      </div>
+      <p class="privacy"><span class="lock" aria-hidden="true">🔒</span> הכול קורה אצלך במכשיר. התמונה לא נשלחת לשום מקום.</p>
+    </header>
+
+    <main>
+      <!-- empty state -->
+      <section id="empty" class="sheet drop" aria-label="בחירת תמונה">
+        <div class="tape tape-a" aria-hidden="true"></div>
+        <div class="tape tape-b" aria-hidden="true"></div>
+        <svg class="drop-art" viewBox="0 0 120 120" aria-hidden="true">
+          <rect x="18" y="14" width="84" height="92" rx="6" class="art-frame" />
+          <circle cx="60" cy="50" r="17" class="art-line" />
+          <path d="M30 100c3-20 16-28 30-28s27 8 30 28" class="art-line" />
+          <path d="M26 30l10-8M26 38l18-15M84 96l10-8M76 98l18-15" class="art-hatch" />
+        </svg>
+        <h2>גוררים לכאן תמונה, ומקבלים ציור</h2>
+        <p class="hint">תמונה של אדם אחד או כמה, לאורך או לרוחב. JPG, PNG או WebP.</p>
+        <div class="actions">
+          <button class="btn primary" id="pick" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17v3h16v-3M12 15V4M7 9l5-5 5 5" /></svg>
+            <span id="pickLabel">בחירת תמונה</span>
+          </button>
+          <button class="btn" id="shoot" type="button" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></svg>
+            <span>צילום</span>
+          </button>
+        </div>
+        <button class="link" id="sample" type="button">אין תמונה בהישג יד? אפשר לנסות עם תמונה לדוגמה</button>
+        <p class="engine" id="engine" aria-live="polite">טוען את כלי הציור…</p>
+      </section>
+
+      <!-- working state -->
+      <section id="work" class="work" hidden>
+        <div class="stage sheet">
+          <div class="tape tape-a" aria-hidden="true"></div>
+          <div class="compare" id="compare" dir="ltr">
+            <canvas id="after" aria-label="הסקיצה"></canvas>
+            <div class="before" id="beforeWrap"><img id="before" alt="התמונה המקורית"></div>
+            <div class="divider" id="divider" hidden>
+              <button class="knob" id="knob" type="button" role="slider" aria-label="השוואה בין לפני לאחרי" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" /></svg>
+              </button>
+            </div>
+            <span class="tag tag-after" id="tagAfter" hidden>אחרי</span>
+            <span class="tag tag-before" id="tagBefore" hidden>לפני</span>
+            <div class="busy" id="busy" hidden>
+              <div class="busy-card">
+                <svg class="busy-pencil" viewBox="0 0 64 64" aria-hidden="true">
+                  <g transform="rotate(-45 38 28)">
+                    <rect x="14" y="22" width="34" height="12" rx="1.5" class="logo-body" />
+                    <rect x="8" y="22" width="8" height="12" rx="3" class="logo-eraser" />
+                    <rect x="15" y="22" width="4" height="12" class="logo-ring" />
+                    <path d="M48 22l12 6-12 6z" class="logo-wood" />
+                    <path d="M55.5 25.8l4.5 2.2-4.5 2.2z" class="logo-tip" />
+                  </g>
+                </svg>
+                <p class="busy-label" id="busyLabel">מתחיל לצייר…</p>
+                <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><i id="barFill"></i></div>
+                <p class="busy-pct" id="busyPct">0%</p>
+              </div>
+            </div>
+            <div class="mini" id="mini" hidden>מעדכן…</div>
+          </div>
+          <p class="note" id="note" hidden></p>
+        </div>
+
+        <aside class="panel sheet" aria-label="הגדרות">
+          <h2>כיוון עדין</h2>
+          <div class="field">
+            <label for="darkness">כהות <output id="darknessOut"></output></label>
+            <input type="range" id="darkness" min="0.5" max="1.8" step="0.05">
+            <div class="ends"><span>בהיר</span><span>כהה</span></div>
+          </div>
+          <div class="field">
+            <label for="thickness">עובי קו <output id="thicknessOut"></output></label>
+            <input type="range" id="thickness" min="0.4" max="2" step="0.05">
+            <div class="ends"><span>דק</span><span>עבה</span></div>
+          </div>
+          <div class="field">
+            <label for="density">צפיפות קווקוו <output id="densityOut"></output></label>
+            <input type="range" id="density" min="0.5" max="2" step="0.05">
+            <div class="ends"><span>דליל</span><span>צפוף</span></div>
+          </div>
+          <div class="field">
+            <label for="paper">גוון נייר <output id="paperOut"></output></label>
+            <input type="range" id="paper" min="0" max="1.5" step="0.05">
+            <div class="ends"><span>לבן</span><span>חם</span></div>
+          </div>
+          <button class="link" id="reset" type="button">חזרה לברירת המחדל</button>
+
+          <div class="downloads">
+            <button class="btn primary" id="savePng" type="button" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17v3h16v-3M12 4v11M7 10l5 5 5-5" /></svg>
+              <span>הורדה PNG</span>
+            </button>
+            <button class="btn" id="saveJpg" type="button" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17v3h16v-3M12 4v11M7 10l5 5 5-5" /></svg>
+              <span>הורדה JPG</span>
+            </button>
+          </div>
+          <p class="size" id="size"></p>
+          <button class="btn ghost" id="another" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5" /></svg>
+            <span>תמונה אחרת</span>
+          </button>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>הציור נוצר כולו בדפדפן שלך, בלי שרת. אפשר לעבוד גם בלי אינטרנט אחרי הטעינה הראשונה.</p>
+    </footer>
+  </div>
+
+  <div class="dropveil" id="dropveil" hidden><div>לשחרר כאן</div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <input type="file" id="file" accept="image/*" hidden>
+  <input type="file" id="camera" accept="image/*" capture="user" hidden>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
